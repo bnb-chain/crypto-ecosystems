@@ -19,3 +19,5 @@
 zig-out/
 .zig-cache/
 .tcache/
+/bnbchain-internal/venv
+bnbchain-internal/.env
