@@ -19,3 +19,4 @@
 zig-out/
 .zig-cache/
 .tcache/
+/venv

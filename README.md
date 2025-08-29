@@ -84,3 +84,61 @@ Data Source: [Electric Capital Crypto Ecosystems](https://github.com/electric-ca
 If you’re working in open source crypto, submit your repository [here](https://github.com/electric-capital/crypto-ecosystems) to be counted.
 
 Thank you for contributing and for reading the contribution guide! ❤️
+
+# CSV to Migration Converter
+
+This script converts the `sheet2.csv` file into a migration file with the format:
+
+```
+repadd "BNB Chain" https://github.com/fstswap/fstswap.github.io #FstSwap
+repadd "BNB Chain" https://github.com/Entangle-Protocol/corechain #Entangle
+repadd "BNB Chain" https://github.com/dawar2151/x-wallet-bulksender-smart-contracts #Token-Bulk-Sender
+```
+
+## Requirements
+
+- Python 3.6 or higher
+- No external dependencies (uses only Python standard library)
+
+## Usage
+
+1. Make sure `sheet2.csv` is in the same directory as the script
+2. Run the script:
+
+```bash
+# On Windows:
+python csv_to_migration.py
+
+# On macOS/Linux:
+python3 csv_to_migration.py
+```
+
+3. The script will generate a `migration_output.txt` file with the converted format
+
+## What the script does
+
+- Reads the CSV file and extracts the `github_link` and `Name` columns
+- Formats each row into the migration format: `repadd "BNB Chain" {github_link} #{cleaned_project_name}`
+- Cleans project names by replacing spaces with hyphens and removing special characters
+- Skips rows with missing data
+- Shows a preview of the first 10 lines of output
+
+## Output
+
+The script will create a file called `migration_output.txt` that you can then copy into your migration file.
+
+## Example output
+
+```
+repadd "BNB Chain" https://github.com/ultiverse-io/ #Ultiverse
+repadd "BNB Chain" https://github.com/Orbofi #Orbofi
+repadd "BNB Chain" https://github.com/Orbofi #Orbofi
+repadd "BNB Chain" https://github.com/HODL-org #HODL
+repadd "BNB Chain" https://github.com/Aegis-im #Aegis
+```
+
+## Troubleshooting
+
+- Make sure `sheet2.csv` exists in the same directory
+- Ensure you have Python 3.6+ installed
+- Check that the CSV file has the expected column names: `Name` and `github_link`
