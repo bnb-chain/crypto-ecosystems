@@ -10,7 +10,7 @@ from datetime import datetime
 
 def csv_to_migration(csv_file_path, output_file_path):
     """
-    Convert CSV file to migration format
+    Convert CSV file to migration format, handling duplicates
     
     Args:
         csv_file_path (str): Path to the input CSV file
@@ -24,9 +24,13 @@ def csv_to_migration(csv_file_path, output_file_path):
             # Print column names for debugging
             print(f"Found columns: {reader.fieldnames}")
             
+            # Track seen entries to handle duplicates
+            seen_entries = set()
+            duplicate_count = 0
+            
             with open(output_file_path, 'w', encoding='utf-8') as outfile:
                 count = 0
-                for row in reader:
+                for row_num, row in enumerate(reader, 1):
                     # Extract the required fields - use project_name for the repo URL
                     repo_url = row.get('project_name', '').strip()
                     
@@ -39,8 +43,20 @@ def csv_to_migration(csv_file_path, output_file_path):
                     
                     # Skip rows with missing data
                     if not repo_url or not project_name:
-                        print(f"Skipping row {count + 1}: repo_url='{repo_url}', project_name='{project_name}'")
+                        print(f"Skipping row {row_num}: repo_url='{repo_url}', project_name='{project_name}'")
                         continue
+                    
+                    # Create a unique identifier for this entry
+                    entry_id = f'{project_name}|{repo_url}'
+                    
+                    # Check for duplicates
+                    if entry_id in seen_entries:
+                        print(f"Skipping duplicate row {row_num}: {project_name} - {repo_url}")
+                        duplicate_count += 1
+                        continue
+                    
+                    # Add to seen entries
+                    seen_entries.add(entry_id)
                     
                     # Clean up the project name for the comment
                     # Remove special characters and replace spaces with hyphens
@@ -52,7 +68,9 @@ def csv_to_migration(csv_file_path, output_file_path):
                     outfile.write(line)
                     count += 1
                 
-                print(f"Successfully processed {count} projects")
+                print(f"Successfully processed {count} unique projects")
+                if duplicate_count > 0:
+                    print(f"Skipped {duplicate_count} duplicate entries")
             
             print(f"Migration file created successfully: {output_file_path}")
             
